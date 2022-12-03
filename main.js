@@ -21,7 +21,7 @@ function start()
     input_value=document.getElementById("object_input").value;
 }
 
-function modeLoaded()
+function modelLoaded()
 {
     console.log("model loaded");
     model_status="true";
@@ -33,6 +33,7 @@ function draw()
 
     if(model_status!="")
     {
+        object_detector.detect(video, gotResult);
         for(i=0;i<objects.length;i++)
         {
             percent=floor(objects[i].confidence*100);
@@ -41,20 +42,21 @@ function draw()
       noFill();
       stroke("purple");
       rect(objects[i].x, objects[i].y, objects[i].width, objects[i].height);
-        }
 
-        if(percent==input_value)
+        if(objects[i].label==input_value)
         {
-            video.stop();
-            object_detector=ml5.objectDetector("cocossd", gotResult);
+            video.stop(); 
+            object_detector.detect(gotResult);
             document.getElementById("status").innerHTML="status =" +input_value+" found!";
+            synth=window.speechSynthesis;
             utterThis=new SpeechSynthesisUtterance( input_value +" found !!");
-            synth.speak(utterThis);//
+            synth.speak(utterThis);
 
         }
         else
         {
-         document.getElementById("status").innerHTML="status = "+ input_value+" not found"
+         document.getElementById("status").innerHTML="status = "+ input_value+" not found";
+        }
         }
     }
 }
